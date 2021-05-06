@@ -1,43 +1,47 @@
-baseurl: /
-languageCode: en-us
-title: The Tidy Blog for Business Analytics
+baseurl: https://example.com
+title: Hugo Tanka Theme Demo
+author: Nan Xiao
+canonifyurls: yes
+languagecode: en
 theme: hugo-tanka
-googleAnalytics: ''
-disqusShortname: ''
+enableEmoji: yes
+hasCJKLanguage: no
+pygmentsstyle: vs
+pygmentscodefences: yes
 ignoreFiles:
   - \.Rmd$
   - \.Rmarkdown$
   - _cache$
   - \.knit\.md$
   - \.utf8\.md$
-permalinks:
-  post: /:year/:month/:day/:slug/
-menu:
-  main:
-    - name: About
-      url: /about/
-    - name: GitHub
-      url: https://github.com/rstudio/blogdown
-    - name: Twitter
-      url: https://twitter.com/rstudio
 params:
-  MathJaxCDN: //cdnjs.cloudflare.com/ajax/libs
-  MathJaxVersion: 2.7.5
-  description: A website built through Hugo and blogdown.
-  favicon: favicon.ico
-  highlightjsCDN: //cdnjs.cloudflare.com/ajax/libs
-  highlightjsLang:
+  faviconfile: images/favicon.png
+  highlightjs: yes
+  highlightjslanguages:
     - r
-    - yaml
-  highlightjsTheme: github
-  highlightjsVersion: 9.12.0
-  logo:
-    alt: Logo
-    height: 50
-    url: logo.png
-    width: 50
+    - python
+    - stan
+  progressively: no
+  sitename: Hugo Tanka Theme
+  uselatex: yes
 markup:
-  defaultMarkdownHandler: goldmark
   goldmark:
     renderer:
       unsafe: yes
+menu:
+  primary:
+    - name: Home
+      url: /
+      weight: 1
+    - name: About
+      url: /about/
+      weight: 2
+    - name: GitHub
+      url: https://github.com/nanxstats
+      weight: 3
+    - name: Twitter
+      url: https://twitter.com/nanxstats
+      weight: 4
+    - name: Subscribe
+      url: /index.xml
+      weight: 5
