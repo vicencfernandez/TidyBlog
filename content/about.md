@@ -1,12 +1,12 @@
 ---
-date: "2020-01-01"
+date: "2020-05-06"
 description: A description of the page
 menu: main
-title: About Hugo Tanka
+title: "About"
 ---
 
-Lorem ipsum dolor sit amet, ex has sale ullum corrumpit, sea dicam nostrum sensibus ad. Porro tritani persecuti te sed. Omittam dissentias pro ex. Atqui luptatum duo id. Eros minim eam ex, novum elitr accusam quo in. Nec ne audire euripidis, [mea qualisque consetetur cu](https://example.com). Suspendisse volutpat sem a risus euismod convallis.
+My name is Vicenç Fernández Alarcón (NBU: Vicenc Fernandez), and I work as Associate Professor at at the [Universitat Politècnica de Catalunya - BarcelonaTech (UPC)](https://www.upc.edu/ca). I am attached to the [Department of Management](https://doe.upc.edu/ca), and I am currently teaching at the [School of Industrial, Aerospace and Audiovisual Engineering (ESEIAAT)](https://eseiaat.upc.edu/ca) and the [Barcelona School of Building Construction (EPSEB)](https://epseb.upc.edu/ca).
+ 
+My research interests cover a broad range of facets of industrial organization: organizational and consumer behavior, air transport management and analysis of transportation networks. I am member of the Advisory Board of [Management Decision](https://www.emeraldgrouppublishing.com/journal/md), and editor of the [Journal of Airline and Airport Management](https://jairm.org/index.php/jairm).
 
-In modus congue feugait eos. In nec nonumy volutpat corrumpit, sea assentior quaerendum no, cum affert scripta ea. No nihil voluptaria pro. [Erat democritum mei no](https://example.com), homero quodsi aliquando id mel, ridens civibus molestiae et nam.
-
-Ea eam postea facilisi. Nullam forensibus consequuntur usu ea, no ius consul delectus periculis. Eam veri numquam an. Et partiendo gubergren eam. Quod iudicabit has ex, eam diam facilisi eu, elitr aliquip no eum.
+My teaching covers three topics: air transport and airport operations, optimization problems and business analytics. [R](https://cran.r-project.org/) and [RStudio](https://rstudio.com/) pervades all my teaching, and my colleagues and I advocate a hands-on, practical approach to learning industrial engineering.
