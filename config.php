@@ -1,17 +1,17 @@
 <?php
 
 return [
-    'production' => false,
-    'baseUrl' => 'https://artisanstatic.netlify.app',
+    'production' => true,
+    'baseUrl' => 'https://tidyblog.netlify.app',
     'site' => [
-        'title' => 'My Jigsaw Blog',
-        'description' => 'Personal blog of John Doe.',
+        'title' => 'The Tidy Blog for Business Analytics',
+        'description' => 'Blog about Business Analytics of Vicenc Fernandez',
         'image' => 'default-share.png',
     ],
     'owner' => [
-        'name' => 'John Doe',
-        'twitter' => 'johndoe',
-        'github' => 'johndoe',
+        'name' => 'Vicenc Fernandez',
+        'twitter' => 'vicencfernandez',
+        'github' => 'vicencfernandez',
     ],
     'services' => [
         'cmsVersion' => '2.10.111',
