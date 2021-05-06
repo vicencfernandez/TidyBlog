@@ -4,11 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title><font size="+2">
+    <title>
         @yield('title')
         {{ !empty($__env->yieldContent('title')) ? ' | ' : '' }}
         {{ $page->site->title }}
-    </font></title>
+    </title>
 
     @include('_partials.head.favicon')
     @include('_partials.head.meta')
@@ -20,7 +20,7 @@
     <section>
         <header>
             <nav>
-                <strong>{{ $page->site->title }}</strong><br>
+                <font size="+2"><strong>{{ $page->site->title }}</strong></font><br>
                 <ul>
                     <li><a href="/">Home</a></li>
                     <li><a href="/posts">Posts</a></li>
