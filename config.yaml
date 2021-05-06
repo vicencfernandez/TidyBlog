@@ -1,6 +1,6 @@
-baseurl: https://example.com
-title: Hugo Tanka Theme Demo
-author: Nan Xiao
+baseurl: https://tidyblog.netlify.app
+title: The Tidy Blog for Business Analytics
+author: Vicenc Fernandez
 canonifyurls: yes
 languagecode: en
 theme: hugo-tanka
@@ -19,10 +19,8 @@ params:
   highlightjs: yes
   highlightjslanguages:
     - r
-    - python
-    - stan
   progressively: no
-  sitename: Hugo Tanka Theme
+  sitename: Tidy Blog for Business Analytics by Vicenc Fernandez
   uselatex: yes
 markup:
   goldmark:
@@ -36,12 +34,6 @@ menu:
     - name: About
       url: /about/
       weight: 2
-    - name: GitHub
-      url: https://github.com/nanxstats
+    - name: Contact
+      url: /contact/
       weight: 3
-    - name: Twitter
-      url: https://twitter.com/nanxstats
-      weight: 4
-    - name: Subscribe
-      url: /index.xml
-      weight: 5
