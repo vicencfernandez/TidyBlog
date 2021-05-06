@@ -1,7 +1,6 @@
 ---
 title: Introducing ggplot
-author: Jose M Sallan
-date: '2021-02-26'
+date: 2021-02-26
 slug: []
 categories:
   - R
@@ -10,6 +9,7 @@ tags:
   - R
 meta_img: images/image.png
 description: Description for the page
+comments: false
 ---
 
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>

@@ -1,0 +1,172 @@
+---
+title: On the performance of for loops in R
+author: Jose M Sallan
+date: '2021-03-05'
+slug: [for-loops-R]
+categories:
+  - R
+tags:
+  - R
+  - optimization
+meta_img: images/image.png
+description: Description for the page
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+A common advice to R users is that we need to avoid `for` loops. This is because the basic data types of R are **vectors** (a variable in R is a vector of length one). Let's see a comparison of the performance of a vectorized operation versus a `for` loop.
+
+## Filtering a vector
+
+We need to find which positions of a numeric vector `vec` contain a number `num`. We may be tempted to do something like this:
+
+```{r}
+f1 <- function(vec, num){
+   n <- length(vec)
+  sol <- logical(n)
+  k <- 1
+  sol <- integer()
+  for(i in 1:n){
+    if(vec[i] == num){
+      sol[k] <- i
+      k <- k+1
+    }
+  }
+  return(sol)
+}
+```
+
+But as R is a vectorial language, we can obtain the same result doing:
+
+```{r}
+f2 <- function(vec, num) return(which(vec == num))
+```
+
+Let's build a large vector, test both functions on it and see if they bring the same result:
+
+```{r}
+set.seed(1313)
+large_vector <- sample(0:9, 10000, replace = TRUE)
+s1 <- f1(large_vector, 4)
+s2 <- f2(large_vector, 4)
+identical(s1, s2)
+```
+
+Let's examine the speed of both operations with the `rbenchmark` library:
+
+```{r}
+library(rbenchmark)
+benchmark(f1(large_vector, 4), f2(large_vector, 4), columns=c('test', 'replications', 'elapsed', 'relative', 'user.self', 'sys.self'), replications = 100, order='elapsed')
+```
+
+We see that the function with a `for` loop is much slower than the vectorised function. This is empirical evidence advocating using vectorised functions when operating with vectors.
+
+## Sum columns of a matrix
+
+Let's now sum the columns of a very large matrix. We have three ways of doing that: with a `for` loop, with an `apply` loop or with a specific function.
+
+### Three ways to do the job
+
+To define a function that sums each column and puts the value into a vector component using a `for` loop:
+
+```{r}
+f3 <- function(m){
+  n <- dim(m)[2]
+  s <- numeric(n)
+  for(i in 1:n) s[i] <- sum(m[,i])
+  return(s)
+}
+```
+
+A second possibility is to run a set of vectorized operations. We can do the same with an `apply` loop over columns:
+
+```{r}
+f4 <- function(m) return(apply(m, 2, sum))
+```
+
+Finally, we can use a built-in function called `colSums` that performs that task.
+
+### Testing performance
+
+Let's define a very large matrix `M`, and apply the three functions to it to obtain the sum of columns:
+
+```{r}
+M <- matrix(sample(1:100, 1000000, replace = TRUE), 1000, 1000)
+s3 <- f3(M)
+s4 <- f4(M)
+s5 <- colSums(M)
+```
+
+The `s4` vector is integer, and the other two numeric. Let's check if they yield the same values:
+
+```{r}
+s4 <- as.numeric(s4)
+identical(s3, s4)
+identical(s4, s5)
+identical(s3, s5)
+```
+
+Let's check the speed of each function:
+
+```{r}
+library(rbenchmark)
+benchmark(f3(M), f4(M), colSums(M), columns=c('test', 'replications', 'elapsed', 'relative', 'user.self', 'sys.self'), order='elapsed')
+```
+
+The best performance is achieved by the built-in function. The `for` loop implementation seems to go faster than `apply` in this context.
+
+## Compute the means of a list of vectors
+
+Finally, we can consider the job of computing the means of a very large list of vectors. Let's define a very large list of vectors:
+
+```{r}
+vectors <- lapply(1:1000, function(x) sample(1:100, 10000, replace = TRUE))
+```
+
+We can compute the mean with a looping function over the list, using the vectorized `mean` function:
+
+```{r}
+looping_mean <- function(list){
+  n <- length(list)
+  means <- numeric(n)
+  for(i in 1:n) means[i] <- mean(list[[i]])
+  return(means)
+}
+```
+
+An alternative for the `for` loop is the `sapply` function:
+
+```{r, eval=FALSE}
+sapply(vectors, mean)
+```
+
+Both functions return the same result:
+
+```{r}
+identical(looping_mean(vectors), sapply(vectors, mean))
+```
+
+Alternatively, we want to store the results on a list, instead of a vector:
+
+```{r, eval=FALSE}
+lapply(vectors, mean)
+```
+
+Let's examine the performance of each implementation:
+
+```{r}
+benchmark(looping_mean(vectors),
+          sapply(vectors, mean),
+          lapply(vectors, mean),
+          columns=c('test', 'replications', 'elapsed', 'relative', 'user.self', 'sys.self'), 
+          order='elapsed',
+          replications = 100)
+```
+
+In this case, the three implementations have a similar performance. 
+
+## When to avoid for loops in R
+
+This small experiment show us when do we need to avoid for loops in R: when performing vectorized operations. As R is a vectorized language, **we must avoid looping across the components of a vector**, like when filtering a vector. This means that we must avoid looping in operations such as computing summarised vector statistics, or subsetting rows of a data frame. In other contexts, iterating functions of the `apply` family have a performance similar as `for` loops. The relative merits of each function seem to depend on each type of iteration.
