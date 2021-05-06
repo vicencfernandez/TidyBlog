@@ -21,6 +21,7 @@
         <header>
             <nav>
                 <font size="+2"><strong>{{ $page->site->title }}</strong></font><br>
+                <i>by Vicenc Fernandez</i> <br>
                 <ul>
                     <li><a href="/">Home</a></li>
                     <li><a href="/posts">Posts</a></li>
