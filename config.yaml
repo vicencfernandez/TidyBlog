@@ -20,7 +20,7 @@ params:
   highlightjslanguages:
     - r
   progressively: no
-  sitename: Tidy Blog for Business Analytics by Vicenc Fernandez
+  sitename: Tidy Blog for Business Analytics \\ by Vicenc Fernandez
   uselatex: yes
 markup:
   goldmark:
