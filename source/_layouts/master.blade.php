@@ -4,11 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>
+    <title><font size="+2">
         @yield('title')
         {{ !empty($__env->yieldContent('title')) ? ' | ' : '' }}
         {{ $page->site->title }}
-    </title>
+    </font></title>
 
     @include('_partials.head.favicon')
     @include('_partials.head.meta')
