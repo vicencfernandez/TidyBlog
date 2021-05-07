@@ -5,8 +5,26 @@ menu: main
 title: "About"
 ---
 
-My name is Vicenç Fernández Alarcón (NBU: Vicenc Fernandez), and I work as Associate Professor at at the [Universitat Politècnica de Catalunya - BarcelonaTech (UPC)](https://www.upc.edu/ca). I am attached to the [Department of Management](https://doe.upc.edu/ca), and I am currently teaching at the [School of Industrial, Aerospace and Audiovisual Engineering (ESEIAAT)](https://eseiaat.upc.edu/ca) and the [Barcelona School of Building Construction (EPSEB)](https://epseb.upc.edu/ca).
- 
-My research interests cover a broad range of facets of industrial organization: organizational and consumer behavior, air transport management and analysis of transportation networks. I am member of the Advisory Board of [Management Decision](https://www.emeraldgrouppublishing.com/journal/md), and editor of the [Journal of Airline and Airport Management](https://jairm.org/index.php/jairm).
+My name is Vicenc Fernandez, Associate Professor in Management and Business Analytics in the Department of Management at the [Universitat Politècnica de Catalunya](https://www.upc.edu/ca) · BarcelonaTech (UPC). I'm co-founder of the [TechTalent-Lab](https://techtalent-lab.upc.edu/en), and I'm teaching in several Engineering and Informatics Schools at the UPC.
 
-My teaching covers three topics: air transport and airport operations, optimization problems and business analytics. [R](https://cran.r-project.org/) and [RStudio](https://rstudio.com/) pervades all my teaching, and my colleagues and I advocate a hands-on, practical approach to learning industrial engineering.
+My research interest cover a broad range of facets of the use of technology in the HR management. Currently, I'm focusing on Workforce Analytics. My teaching covers three topics: Business Analytics, HR Management, and Project Management. 
+
+My core tools for data analysis are R and RStudio.
+
+
+## More information
+
+**Postal Address**
+> Ass. Prof. Vicenc Fernandez
+>
+> Jordi Girona 1-3, Building C5, Ground Floor, Office 001
+>
+> 08034 - Barcelona (Spain)
+
+**Other links**
+
+* Email: <vicenc.fernandez@upc.edu>
+* Personal Web: <https://en.vicenc-fernandez.eu/>
+* Twitter: [@vicencfernandez](https://twitter.com/vicencfernandez)
+* Github: <https://github.com/vicencfernandez>
+* Linkedin: <https://www.linkedin.com/in/vicencfernandez/>
