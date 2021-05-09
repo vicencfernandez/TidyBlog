@@ -18,15 +18,6 @@ My core tools for data analysis are R and RStudio.
 
 ## More information
 
-**Postal Address**
-> Ass. Prof. Vicenc Fernandez
->
-> Jordi Girona 1-3, Building C5, Ground Floor, Office 001
->
-> 08034 - Barcelona (Spain)
-
-**Other links**
-
 * Email: <vicenc.fernandez@upc.edu>
 * Twitter: [@vicencfernandez](https://twitter.com/vicencfernandez)
 * Github: <https://github.com/vicencfernandez>
