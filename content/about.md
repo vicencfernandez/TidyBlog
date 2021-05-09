@@ -5,7 +5,7 @@ menu: main
 title: "About"
 ---
 
-This blog aims to offer simple and fast solutions in the development and running of business analytics with R and Rstudio. Therefore, all posts will have a maximum reading time of three minutes.  I hope you find it helpful!
+This blog aims to offer simple and fast solutions in the development and running of business analytics with R and Rstudio. Therefore, all posts will have a maximum reading time of five minutes.  I hope you find it helpful!
 
 ## About me
 

@@ -1,0 +1,54 @@
+---
+title: Printing Tibbles
+author: Vicenc Fernandez
+date: '2021-05-09'
+slug: []
+categories:
+  - wrangle
+tags:
+  - tibble
+meta_img: images/image.png
+description: Description for the page
+editor_options: 
+  chunk_output_type: console
+---
+
+A `tibble` is a modern and simple `data.frame` for containing our data set. The main feature is that the data visualization adapts to the available space of our window. The two basic functions to show the data set are: 
+
+* `print()` - to show the data set 
+* `glimpse()` - to show the data set transposing rows by columns
+
+To use tibbles we need to load the package `tibble`, or the collection of R packages `tidyverse`.
+
+```{r, message=FALSE}
+library (tidyverse)
+```
+
+Let's see how the results of these two functions for the `iris` data set. 
+
+```{r}
+data(iris)
+iris %>% as_tibble() %>% print()
+iris %>% as_tibble() %>% glimpse()
+```
+
+As we have said, `tibble`, `print()`, and `glimpse()` adapt to the available space of the screen; however, we can force their behavior. For instance, we can define the number of rows to show with the parameter `n`. 
+
+```{r}
+iris %>% as_tibble() %>% print(n = 3) # show only three rows
+```
+
+We can also define the width of text output by the parameter `width`. If we wanto
+to show all columns, we define `width=Inf`.
+
+```{r}
+iris %>% as_tibble() %>% print(n = 3, width = 55) # show only 55 characters in the rows
+iris %>% as_tibble() %>% glimpse(width = 40) # show only 40 characters in the rows
+```
+
+Finally, we can define the umber of extra columns to print abbreviated information for with the parameter `n_extra`. In our case, as we don't have so many columns, the result is the same.
+
+```{r}
+iris %>% as_tibble() %>% print(n = 3, n_extra = 1) # show only 1 extra columns
+```
+
