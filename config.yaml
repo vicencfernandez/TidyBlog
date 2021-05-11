@@ -1,5 +1,5 @@
 baseurl: https://tidyblog.netlify.app/
-title: The Tidy Blog for Business Analytics
+title: The Tidy Blog for Workforce Analytics
 author: Vicenc Fernandez
 canonifyurls: yes
 languagecode: en
@@ -20,7 +20,7 @@ params:
   highlightjslanguages:
     - r
   progressively: no
-  sitename: The Tidy Blog for Business Analytics
+  sitename: The Tidy Blog for Workforce Analytics
   uselatex: yes
 markup:
   goldmark:
