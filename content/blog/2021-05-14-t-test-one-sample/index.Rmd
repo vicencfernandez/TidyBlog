@@ -1,0 +1,93 @@
+---
+title: Student’s t-test for one sample
+author: R package build
+date: '2021-05-14'
+slug: t-test-one-sample
+categories:
+  - test
+tags:
+  - statistics
+meta_img: images/image.png
+description: Student’s t-test for one sample
+editor_options: 
+  chunk_output_type: console
+---
+
+One of the most common statistical hypothesis tests, when we are analyzing populations, is the Student's t-test. We can mainly use this test to evaluate a characteristic's value in a population based on a sample. It's important to highlight that the sample needs to follow a normal distribution for carrying out the Student's t-test (also called normality). Let's see three examples.
+
+### First example
+
+Firstly, we load the data set `employees_for_ttest` that we can find in the package `HRdatsets`. This data set contains a sample with 550 observations.
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+
+devtools::install_github("vicencfernandez/HRdatasets")
+library(HRdatasets)
+employees_for_ttest
+```
+
+We want to know if the average salary of the female employees is equal to or different than 1,930 euros in 2021. So, the first step is to define the null and the alternative hypotheses:
+
+* **Null Hypothesis**: The average salary of female employees in 2021 is equal to 1,930 euros 
+* **Alternative Hypothesis**: The average salary of female employees in 2021 is different than 1,930 euros 
+
+We can also write them mathematically.
+
+* **H0**: $\mu_{salary} = 1930$
+* **H1**: $\mu_{salary} \neq 1930$
+
+The second step is to check the normality of the sample. Then, we can carry out a Shapiro-Wilk test to evaluate its distribution. Of course, when we have samples greater than 30, it's unnecessary to analyze the normality due to the central limit theorem. However, here we are going to test it.
+
+```{r}
+female_employees <- employees_for_ttest %>% filter(gender == "female")
+female_employees$salary21 %>% shapiro.test()
+```
+
+As the p-value (0.5296) is high (greater than 0.05), we cannot reject the hypothesis that the sample comes from a normal distribution population. So, we can accept that the population follows a normal distribution. 
+
+The third step is to set the maximum probability of error that we accept (significance level). In this example, we can use the 5\% (it's the most common value). Remember that we want to say something about the population based on a sample.
+
+Finally, the fourth and last step is to carry out the Student t-test with the function `t.test()` and the following parameters: 
+
+1. _The data set_ - In this scenario, the data set is `female_employess$salary21`
+2. _The value to compare_: `mu` - In this case, it's $1930$
+3. _The type of the alternative hypothesis_: `alternative` - We can face three types of alternative hypothesis: (1) different to ("two.sided"), (2) greater than ("greater"), and (3) less than ("less"). In this case, we have a 'different to' hypothesis.
+4. _The confidence level of the interval_: `conf.level` - Its value is one minus the significance level. In this case, the confidence level is $0.95$. 
+
+```{r}
+female_employees$salary21 %>% t.test(mu = 1930, alternative = "two.sided", conf.level = 0.95)
+```
+
+The p-value tells us the probability of making a mistake if we reject the null hypothesis. As the p-value (0.0497) is less than our significance level (0.05), we can reject the null hypothesis, and so, we can accept the alternative hypothesis. So, the average salary of female employees in 2021 is different than 1,930 euros.
+
+### Second example
+
+Let's see another example with the same data set. Now, we want to test if the average salary of female employees in 2021 is greater than 1,930 euros. So, we define the following hypotheses:
+
+* H0: $\mu_{salary} = 1930$
+* H1: $\mu_{salary} > 1930$
+
+Now, we can use again the function `t.test()`, but with the parameter `alternative = "greater"`.
+
+```{r}
+female_employees$salary21 %>% t.test(mu = 1930, alternative = "greater", conf.level = 0.95)
+```
+
+As the p-value (0.02485) is less than our significance level (0.05), we can reject the null hypothesis, and so, we can accept the alternative hypothesis. So, the average salary of female employees in 2021 is greater than 1,930 euros.
+
+### Third example
+
+Let's see the last example with the same data set. Now, we want to test if the average salary of female employees in 2021 is less than 1,930 euros. So, we define the following hypotheses:
+
+* H0: $\mu_{salary} = 1930$
+* H1: $\mu_{salary} < 1930$
+
+Now, we can use again the function `t.test()`, but with the parameter `alternative = "less"`.
+
+```{r}
+female_employees$salary21 %>% t.test(mu = 1930, alternative = "less", conf.level = 0.95)
+```
+
+As the p-value (0.9752) is greater than our significance level (0.05), we can't reject the null hypothesis, and so, we can't accept the alternative hypothesis. So, we cannot say that the average salary of female employees in 2021 is less than 1,930 euros.
+
