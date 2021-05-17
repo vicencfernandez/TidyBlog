@@ -1,7 +1,7 @@
 ---
 title: The tidy text format for analyzing texts
 author: R package build
-date: '2021-05-17'
+date: '2021-05-16'
 slug: tidytext
 categories:
   - text
