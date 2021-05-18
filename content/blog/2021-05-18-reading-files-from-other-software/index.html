@@ -1,0 +1,125 @@
+---
+title: Reading files from other software
+author: R package build
+date: '2021-05-18'
+slug: []
+categories:
+  - wrangle
+tags:
+  - files
+meta_img: images/image.png
+description: Description for the page
+editor_options: 
+  chunk_output_type: console
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>Your colleagues can decide to work with other software for data analysis, such as SPSS, Stata, and SAS. Every software has its own specific format to save and share the data sets. For example, in R, we have the RData format. The basic information in all these formats is the same. Still, how they organize data sets, the different types of classes they use, and how they manage some kinds of information (e.g., dates and position) could be very different.</p>
+<p>One way to share data sets among different software is using an intermediate open format such as the CSV format, but you can lose part of the information. We have the package <code>haven</code>, which part of the <code>tidyverse</code> to fix this problem. Let’s see some examples with the popular data set <code>iris</code>.</p>
+<p>The first step is to load the package <code>haven</code> and the collection of packages <code>tidyverse</code>.</p>
+<pre class="r"><code>library(tidyverse)
+library(haven)
+
+data(iris)
+my_iris &lt;- iris %&gt;% as_tibble()
+my_iris</code></pre>
+<pre><code>## # A tibble: 150 x 5
+##    Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+##           &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;fct&gt;  
+##  1          5.1         3.5          1.4         0.2 setosa 
+##  2          4.9         3            1.4         0.2 setosa 
+##  3          4.7         3.2          1.3         0.2 setosa 
+##  4          4.6         3.1          1.5         0.2 setosa 
+##  5          5           3.6          1.4         0.2 setosa 
+##  6          5.4         3.9          1.7         0.4 setosa 
+##  7          4.6         3.4          1.4         0.3 setosa 
+##  8          5           3.4          1.5         0.2 setosa 
+##  9          4.4         2.9          1.4         0.2 setosa 
+## 10          4.9         3.1          1.5         0.1 setosa 
+## # … with 140 more rows</code></pre>
+<p>Let’s start with the standard format in <strong>R</strong> (“rds”).</p>
+<pre class="r"><code># R
+saveRDS(my_iris, file = &quot;iris.rds&quot;)
+my_new_iris &lt;- readRDS(&quot;iris.rds&quot;)
+my_new_iris</code></pre>
+<pre><code>## # A tibble: 150 x 5
+##    Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+##           &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;fct&gt;  
+##  1          5.1         3.5          1.4         0.2 setosa 
+##  2          4.9         3            1.4         0.2 setosa 
+##  3          4.7         3.2          1.3         0.2 setosa 
+##  4          4.6         3.1          1.5         0.2 setosa 
+##  5          5           3.6          1.4         0.2 setosa 
+##  6          5.4         3.9          1.7         0.4 setosa 
+##  7          4.6         3.4          1.4         0.3 setosa 
+##  8          5           3.4          1.5         0.2 setosa 
+##  9          4.4         2.9          1.4         0.2 setosa 
+## 10          4.9         3.1          1.5         0.1 setosa 
+## # … with 140 more rows</code></pre>
+<p>We can find the file <code>iris.rds</code> in the working directory of your hard drive. Besides, we can see that we have loaded the same data set (with the same features) that we had saved. After this process, it’s time to do the same with the standard format of the <strong>SAS</strong> software.</p>
+<pre class="r"><code># SAS
+write_sas(my_iris, &quot;iris.sas7bdat&quot;)
+my_new_iris &lt;- read_sas(&quot;iris.sas7bdat&quot;)</code></pre>
+<p>If we run the previous code, we get the following error: <em>“Failed to create column <code>Sepal.Length</code>: A provided name contains an illegal character”</em>. We must know that many software doesn’t admit variable names with the dot symbol (“.”), so we need to remove them. Let’s fix the problem and try again to save and read the data set in the <strong>SAS</strong> format.</p>
+<pre class="r"><code>my_iris &lt;- my_iris %&gt;% 
+  set_names(~ str_to_lower(.) %&gt;% # To covert the names to lower case
+              str_replace_all(&quot;\\.&quot;, &quot;_&quot;) ) # To replace &#39;.&#39; by &#39;_&#39;
+
+# SAS
+write_sas(my_iris, &quot;iris.sas7bdat&quot;)
+my_new_iris &lt;- read_sas(&quot;iris.sas7bdat&quot;)
+my_new_iris</code></pre>
+<pre><code>## # A tibble: 150 x 5
+##    sepal_length sepal_width petal_length petal_width species
+##           &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt;   &lt;dbl&gt;
+##  1          5.1         3.5          1.4         0.2       1
+##  2          4.9         3            1.4         0.2       1
+##  3          4.7         3.2          1.3         0.2       1
+##  4          4.6         3.1          1.5         0.2       1
+##  5          5           3.6          1.4         0.2       1
+##  6          5.4         3.9          1.7         0.4       1
+##  7          4.6         3.4          1.4         0.3       1
+##  8          5           3.4          1.5         0.2       1
+##  9          4.4         2.9          1.4         0.2       1
+## 10          4.9         3.1          1.5         0.1       1
+## # … with 140 more rows</code></pre>
+<p>Now, we have fixed the problem. We can check what has happened with the factor variable <code>species</code>. The <strong>SAS</strong> format only has saved the value of the factors, not their labels. Finally, we can do the same with the standard formats for <strong>SPSS</strong> and <strong>Stata</strong>.</p>
+<pre class="r"><code># SPSS
+write_sav(my_iris, &quot;iris.sav&quot;)
+my_new_iris &lt;- read_sav(&quot;iris.sav&quot;)
+my_new_iris</code></pre>
+<pre><code>## # A tibble: 150 x 5
+##    sepal_length sepal_width petal_length petal_width    species
+##           &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt;  &lt;dbl+lbl&gt;
+##  1          5.1         3.5          1.4         0.2 1 [setosa]
+##  2          4.9         3            1.4         0.2 1 [setosa]
+##  3          4.7         3.2          1.3         0.2 1 [setosa]
+##  4          4.6         3.1          1.5         0.2 1 [setosa]
+##  5          5           3.6          1.4         0.2 1 [setosa]
+##  6          5.4         3.9          1.7         0.4 1 [setosa]
+##  7          4.6         3.4          1.4         0.3 1 [setosa]
+##  8          5           3.4          1.5         0.2 1 [setosa]
+##  9          4.4         2.9          1.4         0.2 1 [setosa]
+## 10          4.9         3.1          1.5         0.1 1 [setosa]
+## # … with 140 more rows</code></pre>
+<pre class="r"><code># Stata
+write_dta(my_iris, &quot;iris.dta&quot;)
+my_data &lt;- read_dta(&quot;iris.dta&quot;)
+my_new_iris</code></pre>
+<pre><code>## # A tibble: 150 x 5
+##    sepal_length sepal_width petal_length petal_width    species
+##           &lt;dbl&gt;       &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt;  &lt;dbl+lbl&gt;
+##  1          5.1         3.5          1.4         0.2 1 [setosa]
+##  2          4.9         3            1.4         0.2 1 [setosa]
+##  3          4.7         3.2          1.3         0.2 1 [setosa]
+##  4          4.6         3.1          1.5         0.2 1 [setosa]
+##  5          5           3.6          1.4         0.2 1 [setosa]
+##  6          5.4         3.9          1.7         0.4 1 [setosa]
+##  7          4.6         3.4          1.4         0.3 1 [setosa]
+##  8          5           3.4          1.5         0.2 1 [setosa]
+##  9          4.4         2.9          1.4         0.2 1 [setosa]
+## 10          4.9         3.1          1.5         0.1 1 [setosa]
+## # … with 140 more rows</code></pre>
+<p>In the last two cases, the <strong>SPPS</strong> and the <strong>Stata</strong> formats have saved two values for the factor variable <code>species</code>: the numerical value and their label.</p>
