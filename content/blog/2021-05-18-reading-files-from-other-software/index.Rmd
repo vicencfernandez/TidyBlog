@@ -1,0 +1,75 @@
+---
+title: Reading files from other software
+author: R package build
+date: '2021-05-18'
+slug: []
+categories:
+  - wrangle
+tags:
+  - files
+meta_img: images/image.png
+description: Description for the page
+editor_options: 
+  chunk_output_type: console
+---
+
+Your colleagues can decide to work with other software for data analysis, such as SPSS, Stata, and SAS. Every software has its own specific format to save and share the data sets. For example, in R, we have the RData format. The basic information in all these formats is the same. Still, how they organize data sets, the different types of classes they use, and how they manage some kinds of information (e.g., dates and position) could be very different.  
+
+One way to share data sets among different software is using an intermediate open format such as the CSV format, but you can lose part of the information. We have the package `haven`, which part of the `tidyverse` to fix this problem.  Let's see some examples with the popular data set `iris`.
+
+The first step is to load the package `haven` and the collection of packages `tidyverse`. 
+
+```{r, message=FALSE}
+library(tidyverse)
+library(haven)
+
+data(iris)
+my_iris <- iris %>% as_tibble()
+my_iris
+```
+
+Let's start with the standard format in **R** ("rds").
+                  
+```{r}
+# R
+saveRDS(my_iris, file = "iris.rds")
+my_new_iris <- readRDS("iris.rds")
+my_new_iris
+```
+
+We can find the file `iris.rds` in the working directory of your hard drive. Besides, we can see that we have loaded the same data set (with the same features) that we had saved. After this process, it's time to do the same with the standard format of the **SAS** software.
+
+```{r, eval=FALSE}
+# SAS
+write_sas(my_iris, "iris.sas7bdat")
+my_new_iris <- read_sas("iris.sas7bdat")
+```
+
+If we run the previous code, we get the following error: _"Failed to create column `Sepal.Length`: A provided name contains an illegal character"_. We must know that many software doesn't admit variable names with the dot symbol ("."), so we need to remove them. Let's fix the problem and try again to save and read the data set in the **SAS** format.
+
+```{r}
+my_iris <- my_iris %>% 
+  set_names(~ str_to_lower(.) %>% # To covert the names to lower case
+              str_replace_all("\\.", "_") ) # To replace '.' by '_'
+
+# SAS
+write_sas(my_iris, "iris.sas7bdat")
+my_new_iris <- read_sas("iris.sas7bdat")
+my_new_iris
+```
+
+Now, we have fixed the problem. We can check what has happened with the factor variable `species`. The **SAS** format only has saved the value of the factors, not their labels. Finally, we can do the same with the standard formats for **SPSS** and **Stata**.
+
+```{r}
+# SPSS
+write_sav(my_iris, "iris.sav")
+my_new_iris <- read_sav("iris.sav")
+my_new_iris
+
+# Stata
+write_dta(my_iris, "iris.dta")
+my_data <- read_dta("iris.dta")
+my_new_iris
+```
+
+In the last two cases, the **SPPS** and the **Stata** formats have saved two values for the factor variable `species`: the numerical value and their label.

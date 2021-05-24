@@ -1,0 +1,79 @@
+---
+title: Attrition Analysis with Kaplan and Meier Estimation
+author: R package build
+date: '2021-05-21'
+slug: kaplan and meier
+categories:
+  - Supervised Learning
+tags:
+  - attrition
+  - workforce
+editor_options: 
+  chunk_output_type: console
+---
+
+*Attrition Analysis* is one of the most common analyses that companies carry out. The loss of talented employees and finding and training new ones could take a long time, lose a competitive advantage, and generate elevated costs. 
+
+Attrition Analysis belongs to the Survival Analysis category, and there are three basic approaches to analyze it. 
+
+* Parametric methods
+* Semi-parametric methods
+* Non-parametric methods
+
+Today, we will see the most popular non-parametric method for the attrition analysis: The Kaplan and Meier Estimation. One of the most interesting characteristics of the non-parametric methods is that the sample doesn't have to satisfy any distribution. However, before starting with an example, we need to introduce some basic concepts. 
+
+The Kaplan and Meier Estimation defines a survival function ($S(t)$) that depends on time and tells us the probability that one employee will keep working in the company at a specific time. At the beginning of the process, the probability of surviving is one ($S(t=0)=1$). When the time tends to infinity,  the probability of surviving is zero ($S(t \rightarrow \infty)=0$). Finally, we need to take into account the survival function cannot increase with time.
+
+Now, we can start with an example. Firstly, we need to load the data set `employees_attrition` to find in the package `HRdatsets`. This data set contains a sample with 1,470 employees.
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+
+devtools::install_github("vicencfernandez/HRdatasets")
+library(HRdatasets)
+employees_attrition 
+```
+
+We need two ' packages' to carry out the Attrition Analysis with the Kaplan and Meier Estimation. The `survival` package contains the core survival analysis routines, including the definition of Surv objects, Kaplan-Meier and Aalen-Johansen (multi-state) curves, Cox models, and parametric accelerated failure time models. The `survminer` package contains functions for drawing effortlessly beautiful and 'ready-to-publish' survival curves with the 'number at risk' table and 'censoring count plot'.
+
+```{r, message=FALSE, warning=FALSE}
+library(survival)
+library(survminer)
+```
+
+Now, we need to build a Survival object with the information of employees. We only need two variables: the time (years) that each employee has been in the company in the period that we are analyzing (in our case, the variable years), and if finally, the employee left the organization during the period that we are studying (in our case, the variable attrition).
+
+```{r}
+# Select the two core variables, and transform the variable attrition
+employee.clean <- employees_attrition %>% 
+  select (Attrition, YearsAtCompany) %>% 
+  rename (attrition = Attrition, years = YearsAtCompany) %>%
+  mutate (attrition = if_else(attrition=="Yes", 1, 0)) 
+
+employee.surv <- Surv(time = employee.clean$years, event = employee.clean$attrition)
+head (employee.surv, 30)
+```
+
+The object `employee.surv` shows the times and the attrition with the symbol + of all the employees. With this object, we calculate the survival analysis with the function `survfit`. There are three parameters:
+
+* **function** - where we need to include the survival object. As we don't want to analyze our data set taking into account other variables, we write 1
+* **data** - the data set that we are analyzing
+* **type** - The type of estimation that we want to carry out. In this case, we are going to use the Kaplan and Meier Estimation.
+
+```{r}
+employee.km <- survfit(employee.surv ~ 1, data = employee.clean, type = "kaplan-meier")
+
+# Some results
+print(employee.km)
+
+# More results
+summary(employee.km)
+```
+
+With these results, we can analyze the survival probability for each time. For instance, there is a 77.0% (*survival*) of probabilities of surviving (to keep working in the organization) during 11 months (*t*). There are 2 (n.event) employees who left the organization in the 11th month in our data set, and there were 246 (*n.risk*) with probabilities to leave the organization in the 11th month.
+
+It's also widespread to show the survival probabilities using Survival Curves. Let's see the example.
+
+```{r}
+ggsurvplot(employee.km)
+```

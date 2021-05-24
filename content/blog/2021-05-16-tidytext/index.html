@@ -1,0 +1,121 @@
+---
+title: The tidy text format for analyzing texts
+author: R package build
+date: '2021-05-16'
+slug: tidytext
+categories:
+  - text
+  - wrangle
+tags:
+  - textmining
+meta_img: images/image.png
+description: Description for the page
+editor_options: 
+  chunk_output_type: console
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>When we want to analyze text data, it’s highly recommended to convert the data set to a <em>Tidy Data Structure</em>, which has three characteristics:</p>
+<ul>
+<li>Each variable is a column</li>
+<li>Each observation (token) is a row</li>
+<li>Each type of observational unit is a table</li>
+</ul>
+<p>The name of this process is tokenization, and there are different approaches. To tokenize our text data, we can use the function <code>unnest_tokens()</code> from the package <code>tidytext</code>. This function has the following parameters:</p>
+<ul>
+<li><strong><span class="math inline">\(tbl\)</span></strong> is the data.frame or tibble where we have our text data.</li>
+<li><strong><span class="math inline">\(output\)</span></strong> is the name of the new variable where we will add the tokens.</li>
+<li><strong><span class="math inline">\(input\)</span></strong> is the name of the variable or column of our tibble where we have the text data.</li>
+<li><strong><span class="math inline">\(token\)</span></strong> is the unit for tokenizing. The most common are ‘words’, ‘ngrams’, and ‘sentences’.</li>
+</ul>
+<p>Let’s see some examples with different levels of tokenization.</p>
+<p>Firstly, we need to load the data set <code>employees_opinion</code> that we can find in the package <code>HRdatsets</code>. This data set contains a sample with 149 positive and negative employee opinions.</p>
+<pre class="r"><code>library(tidyverse)
+library(tidytext)
+
+devtools::install_github(&quot;vicencfernandez/HRdatasets&quot;)
+library(HRdatasets)
+employees_opinion</code></pre>
+<pre><code>## # A tibble: 149 x 3
+##    commentID comment                                                  assessment
+##        &lt;int&gt; &lt;chr&gt;                                                    &lt;fct&gt;     
+##  1         1 In my 30-year career, I’ve more never been proud and ho… positive  
+##  2         2 They will have to burn the building down before I will … positive  
+##  3         3 I’m surrounded by people who want to work and who love … positive  
+##  4         4 This is the second love of my life.                      positive  
+##  5         5 I have been an employee here for 45 years and will stay… positive  
+##  6         6 For personal reasons I have been forced to seek employm… positive  
+##  7         7 Happy employees don&#39;t go looking for other opportunities positive  
+##  8         8 These folks walk the walk. Seriously. Truly a company o… positive  
+##  9         9 Having this job has changed my life                      positive  
+## 10        10 I’ve been working for this company for only two years, … positive  
+## # … with 139 more rows</code></pre>
+<p>Now, let’s see how to tokenize by words, which means one word by row.</p>
+<pre class="r"><code>employees_opinion %&gt;% unnest_tokens(output = word, input = comment, token=&quot;words&quot;)</code></pre>
+<pre><code>## # A tibble: 2,583 x 3
+##    commentID assessment word  
+##        &lt;int&gt; &lt;fct&gt;      &lt;chr&gt; 
+##  1         1 positive   in    
+##  2         1 positive   my    
+##  3         1 positive   30    
+##  4         1 positive   year  
+##  5         1 positive   career
+##  6         1 positive   i’ve  
+##  7         1 positive   more  
+##  8         1 positive   never 
+##  9         1 positive   been  
+## 10         1 positive   proud 
+## # … with 2,573 more rows</code></pre>
+<p>We can also tokenize by groups of two words (called bi-grams) or three words (called tri-grams). Let’s see these cases.</p>
+<pre class="r"><code>employees_opinion %&gt;%
+  unnest_tokens(bigram, comment, &quot;ngrams&quot;, n = 2)</code></pre>
+<pre><code>## # A tibble: 2,434 x 3
+##    commentID assessment bigram     
+##        &lt;int&gt; &lt;fct&gt;      &lt;chr&gt;      
+##  1         1 positive   in my      
+##  2         1 positive   my 30      
+##  3         1 positive   30 year    
+##  4         1 positive   year career
+##  5         1 positive   career i’ve
+##  6         1 positive   i’ve more  
+##  7         1 positive   more never 
+##  8         1 positive   never been 
+##  9         1 positive   been proud 
+## 10         1 positive   proud and  
+## # … with 2,424 more rows</code></pre>
+<pre class="r"><code>employees_opinion %&gt;%
+  unnest_tokens(trigram, comment, &quot;ngrams&quot;, n = 3)</code></pre>
+<pre><code>## # A tibble: 2,285 x 3
+##    commentID assessment trigram          
+##        &lt;int&gt; &lt;fct&gt;      &lt;chr&gt;            
+##  1         1 positive   in my 30         
+##  2         1 positive   my 30 year       
+##  3         1 positive   30 year career   
+##  4         1 positive   year career i’ve 
+##  5         1 positive   career i’ve more 
+##  6         1 positive   i’ve more never  
+##  7         1 positive   more never been  
+##  8         1 positive   never been proud 
+##  9         1 positive   been proud and   
+## 10         1 positive   proud and honored
+## # … with 2,275 more rows</code></pre>
+<p>Finally, we can tokenize our text data by sentences (i.e., separated by points). You can see that the first and second opinions have just one sentence. But the third and sixth opinions have several sentences.</p>
+<pre class="r"><code>employees_opinion %&gt;%
+  unnest_tokens(sentence, comment, &quot;sentences&quot;)</code></pre>
+<pre><code>## # A tibble: 222 x 3
+##    commentID assessment sentence                                                
+##        &lt;int&gt; &lt;fct&gt;      &lt;chr&gt;                                                   
+##  1         1 positive   in my 30-year career, i’ve more never been proud and ho…
+##  2         2 positive   they will have to burn the building down before i will …
+##  3         3 positive   i’m surrounded by people who want to work and who love …
+##  4         3 positive   the energy that comes from that is like magic in a bott…
+##  5         4 positive   this is the second love of my life.                     
+##  6         5 positive   i have been an employee here for 45 years and will stay…
+##  7         6 positive   for personal reasons i have been forced to seek employm…
+##  8         6 positive   this makes me incredibly sad, as it really is the best …
+##  9         6 positive   after many interviews, i can already see that other com…
+## 10         6 positive   even my management, when i told them that i needed to s…
+## # … with 212 more rows</code></pre>
+<p>Depending on the tokenization level, we can focus on the value and meaning of the words or the words’ context. In the following posts, we will present how to keep working with these tokens.</p>

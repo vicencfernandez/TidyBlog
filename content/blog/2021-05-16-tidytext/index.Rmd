@@ -1,0 +1,68 @@
+---
+title: The tidy text format for analyzing texts
+author: R package build
+date: '2021-05-16'
+slug: tidytext
+categories:
+  - text
+  - wrangle
+tags:
+  - textmining
+meta_img: images/image.png
+description: Description for the page
+editor_options: 
+  chunk_output_type: console
+---
+
+When we want to analyze text data, it's highly recommended to  convert the data set to a _Tidy Data Structure_, which has three characteristics: 
+
+* Each variable is a column
+* Each observation (token) is a row
+* Each type of observational unit is a table
+
+The name of this process is tokenization, and there are different approaches. To tokenize our text data, we can use the function `unnest_tokens()` from the package `tidytext`. This function has the following parameters:
+
+* **$tbl$** is the data.frame or tibble where we have our text data.
+* **$output$** is the name of the new variable where we will add the tokens.
+* **$input$** is the name of the variable or column of our tibble where we have the text data.
+* **$token$** is the unit for tokenizing. The most common are 'words', 'ngrams', and 'sentences'.
+
+Let's see some examples with different levels of tokenization.
+
+Firstly, we need to load the data set `employees_opinion` that we can find in the package `HRdatsets`. This data set contains a sample with 149 positive and negative employee opinions.
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(tidytext)
+
+devtools::install_github("vicencfernandez/HRdatasets")
+library(HRdatasets)
+employees_opinion
+```
+
+Now, let's see how to tokenize by words, which means one word by row.  
+
+```{r}
+employees_opinion %>% unnest_tokens(output = word, input = comment, token="words")
+```
+
+We can also tokenize by groups of two words (called bi-grams) or three words (called tri-grams). Let's see these cases.
+
+```{r}
+employees_opinion %>%
+  unnest_tokens(bigram, comment, "ngrams", n = 2)
+```
+
+```{r}
+employees_opinion %>%
+  unnest_tokens(trigram, comment, "ngrams", n = 3)
+```
+
+Finally, we can tokenize our text data by sentences (i.e., separated by points). You can see that the first and second opinions have just one sentence. But the third and sixth opinions have several sentences. 
+
+```{r}
+employees_opinion %>%
+  unnest_tokens(sentence, comment, "sentences")
+```
+
+Depending on the tokenization level, we can focus on the value and meaning of the words or the words' context. In the following posts, we will present how to keep working with these tokens.
