@@ -12,7 +12,6 @@ editor_options:
   chunk_output_type: console
 ---
 
-<script src="{{< blogdown/postref >}}index.en_files/header-attrs/header-attrs.js"></script>
 
 
 <p><em>Attrition Analysis</em> is one of the most common analyses that companies carry out. The loss of talented employees and finding and training new ones could take a long time, lose a competitive advantage, and generate elevated costs.</p>
@@ -24,13 +23,13 @@ editor_options:
 </ul>
 <p>Today, we will see the most popular non-parametric method for the attrition analysis: The Kaplan and Meier Estimation. One of the most interesting characteristics of the non-parametric methods is that the sample doesn’t have to satisfy any distribution. However, before starting with an example, we need to introduce some basic concepts.</p>
 <p>The Kaplan and Meier Estimation defines a survival function (<span class="math inline">\(S(t)\)</span>) that depends on time and tells us the probability that one employee will keep working in the company at a specific time. At the beginning of the process, the probability of surviving is one (<span class="math inline">\(S(t=0)=1\)</span>). When the time tends to infinity, the probability of surviving is zero (<span class="math inline">\(S(t \rightarrow \infty)=0\)</span>). Finally, we need to take into account the survival function cannot increase with time.</p>
-<p>Now, we can start with an example. Firstly, we need to load the data set <code>employees_attrition</code> to find in the package <code>HRdatsets</code>. This data set contains a sample with 1,470 employees.</p>
+<p>Now, we can start with an example. Firstly, we need to load the data set <code>ibm_employees_attrition_performance</code> to find in the package <code>HRdatsets</code>. This data set contains a sample with 1,472 employees.</p>
 <pre class="r"><code>library(tidyverse)
 
 devtools::install_github(&quot;vicencfernandez/HRdatasets&quot;)
 library(HRdatasets)
-employees_attrition </code></pre>
-<pre><code>## # A tibble: 1,470 x 35
+ibm_employees_attrition_performance </code></pre>
+<pre><code>## # A tibble: 1,472 x 35
 ##      Age Attrition BusinessTravel   DailyRate Department        DistanceFromHome
 ##    &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;                &lt;int&gt; &lt;chr&gt;                        &lt;int&gt;
 ##  1    41 Yes       Travel_Rarely         1102 Sales                            1
@@ -43,7 +42,7 @@ employees_attrition </code></pre>
 ##  8    30 No        Travel_Rarely         1358 Research &amp; Devel…               24
 ##  9    38 No        Travel_Frequent…       216 Research &amp; Devel…               23
 ## 10    36 No        Travel_Rarely         1299 Research &amp; Devel…               27
-## # … with 1,460 more rows, and 29 more variables: Education &lt;int&gt;,
+## # … with 1,462 more rows, and 29 more variables: Education &lt;int&gt;,
 ## #   EducationField &lt;chr&gt;, EmployeeCount &lt;int&gt;, EmployeeNumber &lt;int&gt;,
 ## #   EnvironmentSatisfaction &lt;int&gt;, Gender &lt;chr&gt;, HourlyRate &lt;int&gt;,
 ## #   JobInvolvement &lt;int&gt;, JobLevel &lt;int&gt;, JobRole &lt;chr&gt;, JobSatisfaction &lt;int&gt;,
@@ -60,7 +59,7 @@ employees_attrition </code></pre>
 library(survminer)</code></pre>
 <p>Now, we need to build a Survival object with the information of employees. We only need two variables: the time (years) that each employee has been in the company in the period that we are analyzing (in our case, the variable years), and if finally, the employee left the organization during the period that we are studying (in our case, the variable attrition).</p>
 <pre class="r"><code># Select the two core variables, and transform the variable attrition
-employee.clean &lt;- employees_attrition %&gt;% 
+employee.clean &lt;- ibm_employees_attrition_performance %&gt;% 
   select (Attrition, YearsAtCompany) %&gt;% 
   rename (attrition = Attrition, years = YearsAtCompany) %&gt;%
   mutate (attrition = if_else(attrition==&quot;Yes&quot;, 1, 0)) 
@@ -82,41 +81,42 @@ print(employee.km)</code></pre>
 <pre><code>## Call: survfit(formula = employee.surv ~ 1, data = employee.clean, type = &quot;kaplan-meier&quot;)
 ## 
 ##       n  events  median 0.95LCL 0.95UCL 
-##    1470     237      40      32      NA</code></pre>
+##    1472     239      33      32      NA</code></pre>
 <pre class="r"><code># More results
 summary(employee.km)</code></pre>
 <pre><code>## Call: survfit(formula = employee.surv ~ 1, data = employee.clean, type = &quot;kaplan-meier&quot;)
 ## 
 ##  time n.risk n.event survival std.err lower 95% CI upper 95% CI
-##     0   1470      16    0.989 0.00271        0.984        0.994
-##     1   1426      59    0.948 0.00583        0.937        0.960
-##     2   1255      27    0.928 0.00690        0.914        0.941
-##     3   1128      20    0.911 0.00769        0.896        0.927
-##     4   1000      19    0.894 0.00851        0.877        0.911
-##     5    890      21    0.873 0.00947        0.855        0.892
-##     6    694       9    0.862 0.01007        0.842        0.882
-##     7    618      11    0.846 0.01091        0.825        0.868
-##     8    528       9    0.832 0.01173        0.809        0.855
-##     9    448       8    0.817 0.01264        0.793        0.842
-##    10    366      18    0.777 0.01516        0.748        0.807
-##    11    246       2    0.770 0.01568        0.740        0.802
-##    13    200       2    0.763 0.01644        0.731        0.796
-##    14    176       2    0.754 0.01736        0.721        0.789
-##    15    158       1    0.749 0.01789        0.715        0.785
-##    16    138       1    0.744 0.01857        0.708        0.781
-##    17    126       1    0.738 0.01934        0.701        0.777
-##    18    117       1    0.732 0.02018        0.693        0.772
-##    19    104       1    0.725 0.02117        0.684        0.767
-##    20     93       1    0.717 0.02233        0.674        0.762
-##    21     66       1    0.706 0.02449        0.660        0.756
-##    22     52       1    0.692 0.02753        0.641        0.749
-##    23     37       1    0.674 0.03253        0.613        0.741
-##    24     35       1    0.654 0.03686        0.586        0.731
-##    31     16       1    0.614 0.05256        0.519        0.726
-##    32     13       1    0.566 0.06641        0.450        0.713
-##    33     10       1    0.510 0.08037        0.374        0.694
+##     0   1472      16    0.989 0.00270        0.984        0.994
+##     1   1428      59    0.948 0.00582        0.937        0.960
+##     2   1257      27    0.928 0.00689        0.914        0.941
+##     3   1130      20    0.911 0.00768        0.897        0.927
+##     4   1002      19    0.894 0.00850        0.878        0.911
+##     5    892      21    0.873 0.00946        0.855        0.892
+##     6    696       9    0.862 0.01006        0.842        0.882
+##     7    620      11    0.847 0.01089        0.825        0.868
+##     8    530       9    0.832 0.01171        0.810        0.855
+##     9    450       8    0.817 0.01261        0.793        0.842
+##    10    368      18    0.777 0.01511        0.748        0.808
+##    11    248       2    0.771 0.01563        0.741        0.802
+##    13    202       2    0.764 0.01638        0.732        0.796
+##    14    178       2    0.755 0.01728        0.722        0.790
+##    15    160       1    0.750 0.01781        0.716        0.786
+##    16    140       1    0.745 0.01847        0.710        0.782
+##    17    128       1    0.739 0.01922        0.702        0.778
+##    18    119       1    0.733 0.02003        0.695        0.773
+##    19    106       1    0.726 0.02100        0.686        0.768
+##    20     95       1    0.718 0.02213        0.676        0.763
+##    21     68       1    0.708 0.02419        0.662        0.757
+##    22     54       1    0.695 0.02706        0.644        0.750
+##    23     39       1    0.677 0.03169        0.617        0.742
+##    24     37       1    0.658 0.03573        0.592        0.732
+##    31     18       1    0.622 0.04902        0.533        0.726
+##    32     15       2    0.539 0.06917        0.419        0.693
+##    33     11       2    0.441 0.08445        0.303        0.642
 ##    40      1       1    0.000     NaN           NA           NA</code></pre>
 <p>With these results, we can analyze the survival probability for each time. For instance, there is a 77.0% (<em>survival</em>) of probabilities of surviving (to keep working in the organization) during 11 months (<em>t</em>). There are 2 (n.event) employees who left the organization in the 11th month in our data set, and there were 246 (<em>n.risk</em>) with probabilities to leave the organization in the 11th month.</p>
 <p>It’s also widespread to show the survival probabilities using Survival Curves. Let’s see the example.</p>
-<pre class="r"><code>ggsurvplot(employee.km)</code></pre>
+<pre class="r"><code>ggsurvplot(employee.km, surv.median.line = &quot;hv&quot;)</code></pre>
 <p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>As we can see in the previous plot, there is a 50% of probabilities to survive (keep working in the same company) during 32 years.</p>

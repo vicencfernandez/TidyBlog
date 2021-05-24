@@ -24,14 +24,14 @@ Today, we will see the most popular non-parametric method for the attrition anal
 
 The Kaplan and Meier Estimation defines a survival function ($S(t)$) that depends on time and tells us the probability that one employee will keep working in the company at a specific time. At the beginning of the process, the probability of surviving is one ($S(t=0)=1$). When the time tends to infinity,  the probability of surviving is zero ($S(t \rightarrow \infty)=0$). Finally, we need to take into account the survival function cannot increase with time.
 
-Now, we can start with an example. Firstly, we need to load the data set `employees_attrition` to find in the package `HRdatsets`. This data set contains a sample with 1,470 employees.
+Now, we can start with an example. Firstly, we need to load the data set `ibm_employees_attrition_performance` to find in the package `HRdatsets`. This data set contains a sample with 1,472 employees.
 
 ```{r, message=FALSE, warning=FALSE}
 library(tidyverse)
 
 devtools::install_github("vicencfernandez/HRdatasets")
 library(HRdatasets)
-employees_attrition 
+ibm_employees_attrition_performance 
 ```
 
 We need two ' packages' to carry out the Attrition Analysis with the Kaplan and Meier Estimation. The `survival` package contains the core survival analysis routines, including the definition of Surv objects, Kaplan-Meier and Aalen-Johansen (multi-state) curves, Cox models, and parametric accelerated failure time models. The `survminer` package contains functions for drawing effortlessly beautiful and 'ready-to-publish' survival curves with the 'number at risk' table and 'censoring count plot'.
@@ -45,7 +45,7 @@ Now, we need to build a Survival object with the information of employees. We on
 
 ```{r}
 # Select the two core variables, and transform the variable attrition
-employee.clean <- employees_attrition %>% 
+employee.clean <- ibm_employees_attrition_performance %>% 
   select (Attrition, YearsAtCompany) %>% 
   rename (attrition = Attrition, years = YearsAtCompany) %>%
   mutate (attrition = if_else(attrition=="Yes", 1, 0)) 
@@ -75,5 +75,7 @@ With these results, we can analyze the survival probability for each time. For i
 It's also widespread to show the survival probabilities using Survival Curves. Let's see the example.
 
 ```{r}
-ggsurvplot(employee.km)
+ggsurvplot(employee.km, surv.median.line = "hv")
 ```
+
+As we can see in the previous plot, there is a 50% of probabilities to survive (keep working in the same company) during 32 years. 
