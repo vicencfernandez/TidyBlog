@@ -1,8 +1,11 @@
 ---
-date: "2020-05-06"
-description: A description of the page
-menu: main
-title: "About"
+aliases:
+- about-us
+- contact
+author: Vicenc Fernandez
+date: "2021-05-01"
+description: About the blog and myself
+title: About
 ---
 
 This blog aims to offer simple and fast solutions in the development and running of workforce analytics with R and Rstudio. Therefore, all posts will have a maximum reading time of five minutes. I hope you find it helpful!
