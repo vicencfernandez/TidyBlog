@@ -1,0 +1,80 @@
+---
+title: Comparing Attrition with Kaplan and Meier Estimation
+author: R package build
+date: '2021-06-06'
+slug: comparing-attrition-kaplan-meier
+categories:
+  - Supervised Learning
+tags:
+  - attrition
+  - workforce
+---
+
+We introduced *Attrition Analysis* in Human Resources Management using the Kaplan and Meier Estimation in a [previous post of this blog](https://tidyblog.netlify.app/post/kaplan-and-meier/). In summary, we can say that the Kaplan and Meier Estimation (a non-parametric method) defines a survival function that allows us to calculate the probability ($S(t)$) that one employee leaves the organization after a while.
+
+In the [previous post](https://tidyblog.netlify.app/post/kaplan-and-meier/), we explained how to calculate the survival function of all employees, understand the results, and represent it. Today, we will see how to calculate the survival function of two (or more) employee groups (e.g., employees from different departments) of the same organization and test whether we could consider if their survival functions are different.
+
+We will use the same data set (`ibm_employees_attrition_performance`) as the last time, which we can find in the package `HRdatsets`. This data set contains a sample of 1,472 employees.
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+devtools::install_github("vicencfernandez/HRdatasets")
+library(HRdatasets)
+```
+
+We need two packages to carry out the *Attrition Analysis* with the Kaplan and Meier Estimation: the `survival` and the `survminer` packages. 
+
+```{r, message=FALSE, warning=FALSE}
+library(survival)
+library(survminer)
+```
+
+After loading them, the following step is to create a survival object with the information of employees. Usually, we only need two variables: the time (years) that each employee has been in the company in the period that we are analyzing (in our case, the variable years), and if finally, the employee left the organization during the period that we are studying (in our case, the variable attrition). But now, we need a third variable to cluster the employees in two or more groups. On this occasion, we have decided to use the variable `gender` for clustering the employee sample.
+
+```{r}
+# Select the two core variables and the segmentation variable, and transform the variable attrition
+employee.clean <- ibm_employees_attrition_performance %>% 
+  select (Attrition, YearsAtCompany, Gender) %>% 
+  rename (attrition = Attrition, years = YearsAtCompany, gender = Gender) %>%
+  mutate (attrition = if_else(attrition=="Yes", 1, 0)) 
+
+# Build the survival object with the two core variables
+employee.surv <- Surv(time = employee.clean$years, event = employee.clean$attrition)
+```
+
+From the survival object, we will carry out our survival analysis with the function `survfit`. There are three parameters:
+
+* **function** - where we need to include the survival object. As we want to analyze our data set depending on the gender, we write `~gender`.
+* **data** - the data set that we are analyzing
+* **type** - The type of estimation that we want to carry out. In this case, we are going to use the Kaplan and Meier Estimation.
+
+```{r}
+employee.km <- survfit(employee.surv ~ gender, data = employee.clean, type = "kaplan-meier")
+
+# Some results
+print(employee.km)
+
+# More results
+summary(employee.km)
+```
+
+With these results, we can analyze the survival probability for each time in each gender. For instance, in the case of females, there is a 79.1% (*survival*) of the probability of surviving (to keep working in the organization) during 11 months (*t*). There was 1 (*n.event*) female who left the organization in the 11th month in our data set, and there were 115 females (*n.risk*) with probabilities to leave the organization in the 11th month. On the other hand, for males, there is a 75.8% (*survival*) of the probability of surviving during 11 months (*t*). There was 1 (*n.event*) male who left the organization in the 11th month in our data set, and there were 133 females (*n.risk*) with probabilities to leave the organization in the 11th month.
+
+It’s also widespread to show the survival probabilities using Survival Curves. Let’s see the previous example, and if we can confirm that the survival functions are different depending on the gender.
+
+```{r}
+ggsurvplot(employee.km,  surv.median.line = "hv")
+```
+
+In some cases, it's effortless to test if the survival curves are different. But in this specific case, it isn't easy to decide if these two survival functions are significantly different based on the survival curves. In some parts, they are very similar, but not in others. One option to take this decision is to carry out a log-rank test (the log-rank statistic is approximately distributed as a chi-square test statistic).
+
+```{r}
+# Long-Rank Test
+survdiff(employee.surv ~ gender, data = employee.clean, rho = 0)
+```
+
+As the *p-value* is greater than 0.05 (the typical threshold), we cannot reject the hypothesis that the survival curves (probabilities) are the same in both populations over time. So, we need to consider that the attrition for females and males are the same. We also can get the *p-value* of the log-rank test adding the parameter `pval = TRUE` in the visual representation.
+
+```{r}
+ggsurvplot(employee.km,  pval = TRUE, surv.median.line = "hv")
+```
